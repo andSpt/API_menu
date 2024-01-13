@@ -25,7 +25,7 @@ class MenuRepository:
         self.name = 'menu'
     
 
-    async def get_menu_query(self, **kwargs) -> Result:
+    async def basic_menu_query(self, **kwargs) -> Result:
         '''Return join select all tables DB.
         Kwargs parametrs will add filtering to the query.
         Query containts count of submenus and dishes.'''
@@ -39,18 +39,28 @@ class MenuRepository:
         ).filter_by(**kwargs).outerjoin(Submenu, Menu.id==Submenu.menu_id).outerjoin(Dish, Submenu.id==Dish.submenu_id).group_by(Menu.id)
 
         result = await self.session.execute(stmt)
-        
         return result
+    
+
+    async def check_exists_menu(self, menu_data: MenuCreate) -> None:
+        '''Checks there is an object with the same id and title parameters in the database'''
+        
+        stmt = select(Menu.id, Menu.title).filter(or_(Menu.id == menu_data.id, Menu.title == menu_data.title))
+        object = await self.session.scalar(stmt)
+        if object:
+            alredy_exist(self.name)
     
     
     async def read_all(self) -> list[MenuOut]:
         '''Return list all menu into DB'''
-        result: Result = await self.get_menu_query()
+        
+        result: Result = await self.basic_menu_query()
         return result.all()
     
 
     async def create_menu(self, menu_data: MenuCreate) -> Menu:
         '''Create menu'''
+        
         await self.check_exists_menu(menu_data)
 
         db_menu = Menu(id=menu_data.id if menu_data.id else uuid4(),
@@ -65,13 +75,7 @@ class MenuRepository:
         return db_menu
         
 
-    async def check_exists_menu(self, menu_data: MenuCreate) -> None:
-        '''Check exists alredy has created object menu '''
-        stmt = select(Menu.id, Menu.title).filter(or_(Menu.id == menu_data.id, Menu.title == menu_data.title))
-        object = await self.session.scalar(stmt)
-    
-        if object:
-            alredy_exist(self.name)
+   
 
 
 
