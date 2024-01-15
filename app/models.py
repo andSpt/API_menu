@@ -13,7 +13,7 @@ class Base(DeclarativeBase):
     def __tablename__(cls) -> str:
         return f'{cls.__name__.lower()}_table'
 
-    id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True)
+    id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title: Mapped[str] = mapped_column(String(50), index=True)
     description: Mapped[str] = mapped_column(String(125))
 

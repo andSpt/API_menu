@@ -4,16 +4,20 @@ from pydantic import BaseModel, ConfigDict, field_validator, UUID4
 
 
 class BaseItem(BaseModel):
-    id: UUID4 | str | None = None
     title: str
     description: str
 
     
-class MenuCreate(BaseItem):
-    pass
+class MenuCreateSchema(BaseItem):
+    id: UUID4 | str | None = None
 
 
-class MenuOut(BaseItem):
+class MenuUpdateSchema(MenuCreateSchema):
+    title: str | None = None
+    description: str | None = None
+
+
+class MenuSchema(MenuCreateSchema):
     id: UUID4
     submenus_count: int
     dishes_count: int
@@ -21,22 +25,30 @@ class MenuOut(BaseItem):
     model_config = ConfigDict(from_attributes=True)
 
 
-class SubmenuIn(BaseItem):
+
+
+
+class SubmenuCreate(BaseItem):
     pass
 
 
-class SubmenuOut(BaseItem):
+class Submenu(SubmenuCreate):
     id: UUID4
     dishes_count: int
 
     model_config = ConfigDict(from_attributes=True)
 
 
-class DishIn(BaseItem):
+class SubmenuUpdatePartial(SubmenuCreate):
+    title: str | None = None
+    description: str | None = None
+
+
+class DishCreate(BaseItem):
     price: Decimal
 
 
-class DishOut(BaseItem):
+class Dish(BaseItem):
     id: UUID4
     price: Decimal
 
@@ -45,5 +57,11 @@ class DishOut(BaseItem):
         return Decimal(value).quantize(Decimal('.01'))
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class DishUpdatePartial(DishCreate):
+    title: str | None = None
+    description: str | None = None
+    price: Decimal | None = None
 
 

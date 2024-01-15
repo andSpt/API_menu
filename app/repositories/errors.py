@@ -12,6 +12,11 @@ def alredy_exist(name_subject: str) -> NoReturn:
                                     detail=f'{name_subject} already exists')
 
 
+def not_found(name_subject: str) -> NoReturn:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                    detail=f'{name_subject} not found')
+
+
 
 # async def check_exists_object_by_attribute(model, object, attribute: str) -> None:
 #         '''Функция проверяет существует ли в базе данных объект с данным атрибутом'''
