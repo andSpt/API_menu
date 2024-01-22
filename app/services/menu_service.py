@@ -23,7 +23,7 @@ class MenuService:
 
 
     async def create(self, menu_create: MenuCreate) -> MenuResponse:
-        return await self.database_repository.create_menu(menu_create)
+        return await self.database_repository.create_menu(menu_create=menu_create)
     
 
     async def update(self, menu_update: MenuUpdate, menu_id: UUID) -> MenuResponse:
