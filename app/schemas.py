@@ -8,47 +8,45 @@ class BaseItem(BaseModel):
     description: str
 
     
-class MenuCreateSchema(BaseItem):
-    id: UUID4 | str | None = None
+class MenuCreate(BaseItem):
+    pass
 
 
-class MenuUpdateSchema(MenuCreateSchema):
-    title: str | None = None
-    description: str | None = None
+class MenuUpdate(MenuCreate):
+    pass
 
 
-class MenuSchema(MenuCreateSchema):
+class MenuResponse(MenuCreate):
     id: UUID4
-    submenus_count: int
-    dishes_count: int
+    submenus_count: int = 0
+    dishes_count: int = 0
 
     model_config = ConfigDict(from_attributes=True)
-
-
-
 
 
 class SubmenuCreate(BaseItem):
     pass
 
 
-class Submenu(SubmenuCreate):
-    id: UUID4
+class SubmenuUpdate(SubmenuCreate):
+    pass
+
+
+class SubmenuResponse(SubmenuCreate):
     dishes_count: int
 
     model_config = ConfigDict(from_attributes=True)
 
 
-class SubmenuUpdatePartial(SubmenuCreate):
-    title: str | None = None
-    description: str | None = None
-
-
 class DishCreate(BaseItem):
     price: Decimal
 
+class DishUpdate(DishCreate):
+    title: str
+    price: Decimal
 
-class Dish(BaseItem):
+
+class DishResponse(DishCreate):
     id: UUID4
     price: Decimal
 
@@ -57,11 +55,5 @@ class Dish(BaseItem):
         return Decimal(value).quantize(Decimal('.01'))
 
     model_config = ConfigDict(from_attributes=True)
-
-
-class DishUpdatePartial(DishCreate):
-    title: str | None = None
-    description: str | None = None
-    price: Decimal | None = None
 
 
