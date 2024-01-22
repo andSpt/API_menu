@@ -33,7 +33,7 @@ class SubmenuUpdate(SubmenuCreate):
 
 
 class SubmenuResponse(SubmenuCreate):
-    dishes_count: int
+    dishes_count: int = 0
 
     model_config = ConfigDict(from_attributes=True)
 
