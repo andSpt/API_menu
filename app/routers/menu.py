@@ -40,6 +40,7 @@ async def create_menu(menu_data: MenuCreate,
 
 @router.patch('/{menu_id}',
               response_model=MenuResponse,
+              status_code=status.HTTP_200_OK,
               summary='Обновить меню')
 async def update_patch(menu_id: UUID,
                        menu_update: MenuUpdate,

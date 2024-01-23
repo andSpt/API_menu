@@ -3,7 +3,7 @@ from uuid import UUID
 import sqlalchemy
 
 from fastapi import Depends
-from sqlalchemy import select, func, join, Select
+from sqlalchemy import select, func, join, Select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from app.models import Dish, Submenu, Menu
@@ -76,4 +76,22 @@ class SubmenuRepository:
 
         submenu = SubmenuResponse.model_validate(db_submenu, from_attributes=True)
         return submenu
+
+
+    async def update_submenu(self, menu_id: UUID, submenu_id: UUID, submenu_update: SubmenuUpdate) -> SubmenuResponse:
+        submenu: SubmenuResponse = await self.get_submenu(menu_id=menu_id, submenu_id=submenu_id)
+
+        stmt = (
+            update(Submenu)
+            .filter(Submenu.id == submenu_id, Submenu.menu_id == menu_id)
+            .values(**submenu_update.model_dump())
+        )
+        await self.session.execute(stmt)
+        await self.session.commit()
+
+        for name, value in submenu_update.model_dump().items():
+            submenu.__setattr__(name, value)
+
+        return submenu
+
 

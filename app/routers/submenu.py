@@ -29,3 +29,15 @@ async def get_menu(menu_id: UUID, submenu_id: UUID, submenu_service: SubmenuServ
              summary='Создать подменю')
 async def create_submenu(menu_id: UUID, submenu_create: SubmenuCreate, submenu_service: SubmenuService = Depends()):
     return await submenu_service.create(menu_id=menu_id, submenu_create=submenu_create)
+
+@router.patch('/{submenu_id}',
+              response_model=SubmenuResponse,
+              status_code=status.HTTP_200_OK,
+              summary='Обновить подменю')
+async def update_submenu(menu_id: UUID,
+                         submenu_id: UUID,
+                         submenu_update: SubmenuUpdate,
+                         submenu_service: SubmenuService = Depends()):
+    return await submenu_service.update(menu_id=menu_id,
+                                        submenu_id=submenu_id,
+                                        submenu_update=submenu_update)
