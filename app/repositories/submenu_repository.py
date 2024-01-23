@@ -3,7 +3,8 @@ from uuid import UUID
 import sqlalchemy
 
 from fastapi import Depends
-from sqlalchemy import select, func, join, Select, update
+from fastapi.responses import JSONResponse
+from sqlalchemy import select, func, join, Select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from app.models import Dish, Submenu, Menu
@@ -47,7 +48,7 @@ class SubmenuRepository:
     async def get_all(self, menu_id: UUID) -> list[SubmenuResponse]:
         stmt = (
             self._get_basic_query_submenus()
-                .filter(Submenu.menu_id == menu_id)
+            .filter(Submenu.menu_id == menu_id)
         )
         result: Result = await self.session.execute(stmt)
         list_submenus = [SubmenuResponse.model_validate(row, from_attributes=True) for row in result]
@@ -77,7 +78,6 @@ class SubmenuRepository:
         submenu = SubmenuResponse.model_validate(db_submenu, from_attributes=True)
         return submenu
 
-
     async def update_submenu(self, menu_id: UUID, submenu_id: UUID, submenu_update: SubmenuUpdate) -> SubmenuResponse:
         submenu: SubmenuResponse = await self.get_submenu(menu_id=menu_id, submenu_id=submenu_id)
 
@@ -94,4 +94,13 @@ class SubmenuRepository:
 
         return submenu
 
+    async def delete_submenu(self, menu_id: UUID, submenu_id: UUID) -> JSONResponse:
+        await self.get_submenu(menu_id=menu_id, submenu_id=submenu_id)
+        stmt = (
+            delete(Submenu)
+            .filter(Submenu.menu_id == menu_id, Submenu.id == submenu_id)
+        )
+        await self.session.execute(stmt)
+        await self.session.commit()
 
+        return successfully_deleted(self.name)

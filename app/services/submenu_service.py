@@ -2,6 +2,7 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends
+from fastapi.responses import JSONResponse
 from app.database import get_session
 
 from app.models import Submenu
@@ -30,3 +31,5 @@ class SubmenuService:
                                                              submenu_id=submenu_id,
                                                              submenu_update=submenu_update)
 
+    async def delete(self, menu_id: UUID, submenu_id: UUID) -> JSONResponse:
+        return await self.database_repository.delete_submenu(menu_id=menu_id, submenu_id=submenu_id)
