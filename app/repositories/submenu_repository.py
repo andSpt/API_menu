@@ -36,7 +36,7 @@ class SubmenuRepository:
         """Checking the menu object with the title attribute in the DB"""
         stmt = (
             select(Submenu)
-            .filter(Menu.id == menu_id,
+            .filter(Submenu.menu_id == menu_id,
                     getattr(Submenu, attr) == getattr(submenu_create, attr)
                     )
         )
@@ -47,7 +47,7 @@ class SubmenuRepository:
     async def get_all(self, menu_id: UUID) -> list[SubmenuResponse]:
         stmt = (
             self._get_basic_query_submenus()
-                .filter(Menu.id == menu_id)
+                .filter(Submenu.menu_id == menu_id)
         )
         result: Result = await self.session.execute(stmt)
         list_submenus = [SubmenuResponse.model_validate(row, from_attributes=True) for row in result]

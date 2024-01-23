@@ -46,7 +46,7 @@ class MenuRepository:
             .filter(getattr(Menu, attr) == getattr(menu_create, attr))
         )
         menu = await self.session.scalar(stmt)
-        if object:
+        if menu:
             already_exist(self.name)
 
     async def get_all(self) -> list[MenuResponse]:
@@ -64,7 +64,7 @@ class MenuRepository:
         return menu
 
     async def create_menu(self, menu_create: MenuCreate) -> MenuResponse:
-        await self._check_exists_object_by_attr(object_data=menu_create, attr='title')
+        await self._check_exists_menu_by_attr(menu_create=menu_create, attr='title')
         db_menu = Menu(**menu_create.model_dump(exclude_unset=True))
         self.session.add(db_menu)
         await self.session.commit()
