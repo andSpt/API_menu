@@ -1,18 +1,7 @@
-from fastapi import Depends
-from pydantic import BaseModel
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.database import get_session
-from app.models import Base
-from repositories.messages import already_exist
 from typing import NoReturn
 
 from fastapi import status, HTTPException
 from fastapi.responses import JSONResponse
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.engine import Result
 
 
 def not_found(name: str) -> NoReturn:
