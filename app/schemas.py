@@ -33,6 +33,7 @@ class SubmenuUpdate(SubmenuCreate):
 
 
 class SubmenuResponse(SubmenuCreate):
+    id: UUID4
     dishes_count: int = 0
 
     model_config = ConfigDict(from_attributes=True)
@@ -42,8 +43,7 @@ class DishCreate(BaseItem):
     price: Decimal
 
 class DishUpdate(DishCreate):
-    title: str
-    price: Decimal
+    pass
 
 
 class DishResponse(DishCreate):
@@ -52,7 +52,8 @@ class DishResponse(DishCreate):
 
     @field_validator('price')
     def round_price(cls, value) -> Decimal:
-        return Decimal(value).quantize(Decimal('.01'))
+        result = Decimal(value).quantize(Decimal('.01'))
+        return result
 
     model_config = ConfigDict(from_attributes=True)
 
