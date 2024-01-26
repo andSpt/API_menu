@@ -7,16 +7,17 @@ class BaseItem(BaseModel):
     title: str
     description: str
 
-    
+
+class MenuUpdate(BaseItem):
+    title: str | None = None
+    description: str | None = None
+
+
 class MenuCreate(BaseItem):
     pass
 
 
-class MenuUpdate(MenuCreate):
-    pass
-
-
-class MenuResponse(MenuCreate):
+class MenuResponse(BaseItem):
     id: UUID4
     submenus_count: int = 0
     dishes_count: int = 0
@@ -24,15 +25,16 @@ class MenuResponse(MenuCreate):
     model_config = ConfigDict(from_attributes=True)
 
 
+class SubmenuUpdate(BaseItem):
+    title: str | None = None
+    description: str | None = None
+
+
 class SubmenuCreate(BaseItem):
     pass
 
 
-class SubmenuUpdate(SubmenuCreate):
-    pass
-
-
-class SubmenuResponse(SubmenuCreate):
+class SubmenuResponse(BaseItem):
     id: UUID4
     dishes_count: int = 0
 
@@ -42,11 +44,14 @@ class SubmenuResponse(SubmenuCreate):
 class DishCreate(BaseItem):
     price: Decimal
 
-class DishUpdate(DishCreate):
-    pass
+
+class DishUpdate(BaseItem):
+    title: str | None = None
+    description: str | None = None
+    price: Decimal | None = None
 
 
-class DishResponse(DishCreate):
+class DishResponse(BaseItem):
     id: UUID4
     price: Decimal
 
