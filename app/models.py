@@ -19,16 +19,16 @@ class Menu(Base):
     title: Mapped[str] = mapped_column(String(50), index=True)
     description: Mapped[str] = mapped_column(String(125))
 
-    submenus: Mapped[List["Submenu"]] = relationship(back_populates='menu', cascade='all, delete-orphan')
+    submenus: Mapped[List["Submenu"]] = relationship(back_populates='menu', cascade="all, delete-orphan")
 
 
 class Submenu(Base):
     id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title: Mapped[str] = mapped_column(String(50), index=True)
     description: Mapped[str] = mapped_column(String(125))
-    menu_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("menu_table.id"))
+    menu_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("menu_table.id", ondelete='CASCADE'))
     
-    dishes: Mapped[List["Dish"]] = relationship(back_populates="submenu", cascade='all, delete-orphan')
+    dishes: Mapped[List["Dish"]] = relationship(back_populates="submenu", cascade="all, delete-orphan")
     menu: Mapped["Menu"] = relationship(back_populates="submenus")
 
 
@@ -37,7 +37,7 @@ class Dish(Base):
     title: Mapped[str] = mapped_column(String(50), index=True)
     description: Mapped[str] = mapped_column(String(125))
     price: Mapped[Numeric] = mapped_column(Numeric(precision=10, scale=2))
-    submenu_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("submenu_table.id"))
+    submenu_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("submenu_table.id", ondelete='CASCADE'))
 
     submenu: Mapped["Submenu"] = relationship(back_populates="dishes")
 
