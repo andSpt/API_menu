@@ -84,12 +84,12 @@ class SubmenuRepository:
         stmt = (
             update(Submenu)
             .filter(Submenu.id == submenu_id, Submenu.menu_id == menu_id)
-            .values(**submenu_update.model_dump())
+            .values(**submenu_update.model_dump(exclude_unset=True))
         )
         await self.session.execute(stmt)
         await self.session.commit()
 
-        for name, value in submenu_update.model_dump().items():
+        for name, value in submenu_update.model_dump(exclude_unset=True).items():
             submenu.__setattr__(name, value)
 
         return submenu

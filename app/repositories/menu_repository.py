@@ -25,8 +25,8 @@ class MenuRepository:
         stmt = (select(Menu.id,
                        Menu.title,
                        Menu.description,
-                       func.count(Submenu.id).label('submenus_count'),
-                       func.count(Dish.id).label('dishes_count'))
+                       func.count(distinct(Submenu.id)).label('submenus_count'),
+                       func.count(distinct(Dish.id)).label('dishes_count'))
                 .join(Submenu, Menu.id == Submenu.menu_id, isouter=True)
                 .join(Dish, Submenu.id == Dish.submenu_id, isouter=True)
                 .group_by(Menu.id)
@@ -74,10 +74,10 @@ class MenuRepository:
 
     async def update_menu(self, menu_update: MenuUpdate, menu_id: UUID) -> MenuResponse:
         menu: MenuResponse = await self.get_menu(menu_id=menu_id)
-        stmt = update(Menu).filter(Menu.id == menu_id).values(**menu_update.model_dump())
+        stmt = update(Menu).filter(Menu.id == menu_id).values(**menu_update.model_dump(exclude_unset=True))
         await self.session.execute(stmt)
         await self.session.commit()
-        for name, value in menu_update.model_dump().items():
+        for name, value in menu_update.model_dump(exclude_unset=True).items():
             menu.__setattr__(name, value)
 
         return menu
