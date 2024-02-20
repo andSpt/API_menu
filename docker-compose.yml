@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  postgresql:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ylab
+    ports:
+      - '127.0.0.1:6040:5432'
+
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - '127.0.0.1:6379:6379'
