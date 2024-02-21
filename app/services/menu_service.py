@@ -1,5 +1,5 @@
 from uuid import UUID
-from fastapi import Depends
+from fastapi import Depends, BackgroundTasks
 from fastapi.responses import JSONResponse
 
 
@@ -13,13 +13,16 @@ class MenuService:
 
     def __init__(
         self,
+        background_tasks: BackgroundTasks,
         database_repository: MenuRepository = Depends(),
         menu_cache: MenuCache = Depends(),
     ) -> None:
         self.database_repository = database_repository
         self.menu_cache = menu_cache
+        self.background_tasks = background_tasks
 
     async def get_all(self) -> list[MenuResponse]:
+
         return await self.database_repository.get_all()
 
     async def get_one(self, menu_id: UUID) -> MenuResponse:
@@ -33,12 +36,28 @@ class MenuService:
         return menu
 
     async def create(self, menu_create: MenuCreate) -> MenuResponse:
-        return await self.database_repository.create_menu(menu_create=menu_create)
+        menu: MenuResponse = await self.database_repository.create_menu(
+            menu_create=menu_create
+        )
+        await self.menu_cache.set_data_to_cache(menu_id=menu.id, menu_data=menu)
+        return menu
 
     async def update(self, menu_update: MenuUpdate, menu_id: UUID) -> MenuResponse:
-        return await self.database_repository.update_menu(
+        print("Background task for updating is executing...")
+        menu_updated = await self.database_repository.update_menu(
             menu_update=menu_update, menu_id=menu_id
         )
+        await self.menu_cache.invalidate_cache_menu(
+            menu_id=menu_id, background_tasks=self.background_tasks
+        )
+        print("Background task for updating completed.")
+        return menu_updated
 
     async def delete(self, menu_id: UUID) -> JSONResponse:
-        return await self.database_repository.delete_menu(menu_id=menu_id)
+        result = await self.database_repository.delete_menu(menu_id=menu_id)
+        if result:
+            await self.menu_cache.invalidate_cache_menu(
+                menu_id=menu_id, background_tasks=self.background_tasks
+            )
+
+        return result

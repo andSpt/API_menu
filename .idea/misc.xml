@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Black">
+    <option name="enabledOnReformat" value="true" />
+    <option name="enabledOnSave" value="true" />
+    <option name="executionMode" value="BINARY" />
+    <option name="pathToExecutable" value="C:\Users\henrr\AppData\Local\pypoetry\Cache\virtualenvs\api-menu-cWnEXCP7-py3.11\Scripts\black.exe" />
     <option name="sdkName" value="Poetry (API_menu)" />
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Poetry (API_menu)" project-jdk-type="Python SDK" />

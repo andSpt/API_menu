@@ -16,18 +16,19 @@ class MenuCache:
     ) -> None:
         self.redis = redis
 
-    async def set_data_to_cache(
-        self, menu_id: UUID, menu_data: MenuResponse, ttl: int = None
-    ) -> None:
+    async def set_data_to_cache(self, menu_id: UUID, menu_data: MenuResponse) -> None:
         await self.redis.set(
             name=str(menu_id),
             value=menu_data.model_dump_json(),
-            ex=ttl or settings.cache_ttl,
+            ex=settings.cache_ttl,
         )
 
     async def get_cached_data(self, menu_id: UUID) -> MenuResponse | None:
         cached_data: json = await self.redis.get(name=str(menu_id))
         return (MenuResponse.model_validate_json(cached_data)) if cached_data else None
+
+    # async def set_all_menu_o_cache(self, menus: list[MenuResponse]) -> None:
+
 
     async def clear_cache(self, menu_id: UUID) -> None:
         await self.redis.delete(str(menu_id))
@@ -36,3 +37,6 @@ class MenuCache:
         self, menu_id: UUID, background_tasks: BackgroundTasks
     ) -> None:
         background_tasks.add_task(self.clear_cache, menu_id=menu_id)
+
+
+
