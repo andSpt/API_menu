@@ -29,7 +29,9 @@ class MenuService:
             return all_menus_in_cache
 
         all_menus_in_db = await self.database_repository.get_all()
-        await self.menu_cache.set_all_menus_to_cache(menus=all_menus_in_db)
+        self.background_tasks.add_task(
+            self.menu_cache.set_all_menus_to_cache, all_menus_in_db
+        )
         return all_menus_in_db
 
     async def get_menu(self, menu_id: UUID) -> MenuResponse:
@@ -37,27 +39,35 @@ class MenuService:
         if cached_menu:
             return cached_menu
         menu = await self.database_repository.get_menu(menu_id=menu_id)
-        await self.menu_cache.set_menu_to_cache(menu_id=menu_id, menu_data=menu)
+        self.background_tasks.add_task(
+            self.menu_cache.set_menu_to_cache, menu_id=menu_id, menu_data=menu
+        )
         return menu
 
     async def create_menu(self, menu_create: MenuCreate) -> MenuResponse:
         menu: MenuResponse = await self.database_repository.create_menu(
             menu_create=menu_create
         )
-        await self.menu_cache.set_menu_to_cache(menu_id=menu.id, menu_data=menu)
+        self.background_tasks.add_task(
+            self.menu_cache.set_menu_to_cache, menu_id=menu.id, menu_data=menu
+        )
         return menu
 
     async def update_menu(self, menu_update: MenuUpdate, menu_id: UUID) -> MenuResponse:
         menu_updated = await self.database_repository.update_menu(
             menu_update=menu_update, menu_id=menu_id
         )
-        await self.menu_cache.update_menu_in_cache(
-            menu_id=menu_id, updated_menu=menu_updated
+        self.background_tasks.add_task(
+            self.menu_cache.update_menu_in_cache,
+            menu_id=menu_id,
+            updated_menu=menu_updated,
         )
         return menu_updated
 
     async def delete_menu(self, menu_id: UUID) -> JSONResponse:
         result = await self.database_repository.delete_menu(menu_id=menu_id)
         if result:
-            await self.menu_cache.delete_menu_from_cache(menu_id=menu_id)
+            self.background_tasks.add_task(
+                self.menu_cache.delete_menu_from_cache, menu_id=menu_id
+            )
         return result
