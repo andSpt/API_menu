@@ -35,14 +35,18 @@ class MenuService:
         return all_menus_in_db
 
     async def get_menu(self, menu_id: UUID) -> MenuResponse:
-        cached_menu = await self.menu_cache.get_cached_menu(menu_id=menu_id)
+        cached_menu: MenuResponse | None = await self.menu_cache.get_cached_menu(
+            menu_id=menu_id
+        )
         if cached_menu:
             return cached_menu
-        menu = await self.database_repository.get_menu(menu_id=menu_id)
-        self.background_tasks.add_task(
-            self.menu_cache.set_menu_to_cache, menu_id=menu_id, menu_data=menu
+        menu_in_db: MenuResponse = await self.database_repository.get_menu(
+            menu_id=menu_id
         )
-        return menu
+        self.background_tasks.add_task(
+            self.menu_cache.set_menu_to_cache, menu_id=menu_id, menu_data=menu_in_db
+        )
+        return menu_in_db
 
     async def create_menu(self, menu_create: MenuCreate) -> MenuResponse:
         menu: MenuResponse = await self.database_repository.create_menu(
@@ -54,13 +58,13 @@ class MenuService:
         return menu
 
     async def update_menu(self, menu_update: MenuUpdate, menu_id: UUID) -> MenuResponse:
-        menu_updated = await self.database_repository.update_menu(
+        menu_updated: MenuResponse = await self.database_repository.update_menu(
             menu_update=menu_update, menu_id=menu_id
         )
         self.background_tasks.add_task(
             self.menu_cache.update_menu_in_cache,
             menu_id=menu_id,
-            updated_menu=menu_updated,
+            menu_updated=menu_updated,
         )
         return menu_updated
 
