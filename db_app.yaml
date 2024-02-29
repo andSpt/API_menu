@@ -1,18 +1,64 @@
-version: '3'
+version: '3.9'
 
 services:
   db_app:
+    container_name: postgres
     image: postgres:latest
     restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: ylab
     ports:
       - '127.0.0.1:6040:5432'
+    healthcheck:
+      test: sh -c "pg_isready -U postgres -d ylab"
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 80s
 
-  redis_app:
+  redis:
+    container_name: redis
     image: redis:latest
     restart: always
     ports:
       - '127.0.0.1:6379:6379'
+    healthcheck:
+      test: sh -c "redis-cli ping"
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 80s
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.13-alpine
+    restart: always
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - "127.0.0.1:5672:5672"
+    networks:
+      - api_network
+    healthcheck:
+      test: sh -c "rabbitmq-diagnostics -q ping"
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 80s
+
+
+
+networks:
+  api_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
+
+
+
