@@ -1,6 +1,9 @@
 from decimal import Decimal
+from datetime import datetime
+from typing import Annotated
+from annotated_types import MinLen, MaxLen
 
-from pydantic import BaseModel, ConfigDict, field_validator, UUID4
+from pydantic import BaseModel, ConfigDict, field_validator, UUID4, validator, EmailStr
 
 
 class BaseItem(BaseModel):
@@ -55,11 +58,29 @@ class DishResponse(BaseItem):
     id: UUID4
     price: Decimal
 
-    @field_validator('price')
+    @field_validator("price")
     def round_price(cls, value) -> Decimal:
-        result = Decimal(value).quantize(Decimal('.01'))
+        result = Decimal(value).quantize(Decimal(".01"))
         return result
 
     model_config = ConfigDict(from_attributes=True)
 
 
+class UserCreate(BaseModel):
+    username: Annotated[str, MinLen(3), MaxLen(20)]
+    password: str
+    email: EmailStr | None = None
+    is_active: bool | None = True
+
+
+class UserResponse(UserCreate):
+    id: UUID4 | str
+    password: bytes
+    registered_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class TokenInfo(BaseModel):
+    access_token: str
+    token_type: str
