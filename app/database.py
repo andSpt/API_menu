@@ -22,4 +22,4 @@ async def get_session() -> AsyncIterator:
 async def init_redis_pool() -> AsyncIterator[Redis]:
     session = redis.from_url(url=settings.redis_url, decode_responses=True)
     yield session
-    await session.close()
+    await session.aclose()
