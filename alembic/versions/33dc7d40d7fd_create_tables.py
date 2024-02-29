@@ -1,8 +1,8 @@
 """create tables
 
-Revision ID: 54e8e9e711d3
+Revision ID: 33dc7d40d7fd
 Revises: 
-Create Date: 2024-02-24 12:46:37.004561
+Create Date: 2024-02-28 14:05:38.369577
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "54e8e9e711d3"
+revision: str = "33dc7d40d7fd"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -32,6 +32,16 @@ def upgrade() -> None:
         op.f("ix_menu_table_title"), "menu_table", ["title"], unique=False
     )
     op.create_table(
+        "user_table",
+        sa.Column("id", sa.UUID(), nullable=False),
+        sa.Column("username", sa.String(length=64), nullable=False),
+        sa.Column("password_hash", sa.String(length=128), nullable=False),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_index(
+        op.f("ix_user_table_username"), "user_table", ["username"], unique=True
+    )
+    op.create_table(
         "submenu_table",
         sa.Column("id", sa.UUID(), nullable=False),
         sa.Column("title", sa.String(length=50), nullable=False),
@@ -43,7 +53,10 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        op.f("ix_submenu_table_title"), "submenu_table", ["title"], unique=False
+        op.f("ix_submenu_table_title"),
+        "submenu_table",
+        ["title"],
+        unique=False,
     )
     op.create_table(
         "dish_table",
@@ -69,6 +82,8 @@ def downgrade() -> None:
     op.drop_table("dish_table")
     op.drop_index(op.f("ix_submenu_table_title"), table_name="submenu_table")
     op.drop_table("submenu_table")
+    op.drop_index(op.f("ix_user_table_username"), table_name="user_table")
+    op.drop_table("user_table")
     op.drop_index(op.f("ix_menu_table_title"), table_name="menu_table")
     op.drop_table("menu_table")
     # ### end Alembic commands ###
