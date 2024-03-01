@@ -81,6 +81,13 @@ class UserResponse(UserCreate):
     model_config = ConfigDict(from_attributes=True)
 
 
+class UserUpdate(BaseModel):
+    username: Annotated[str, MinLen(3), MaxLen(20)] | None = None
+    password: str | None = None
+    email: EmailStr | None = None
+    is_active: bool | None = None
+
+
 class TokenInfo(BaseModel):
     access_token: str
     token_type: str

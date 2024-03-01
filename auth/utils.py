@@ -1,9 +1,15 @@
 from datetime import timedelta, datetime
-
+from typing import NoReturn
 import jwt
 import bcrypt
 
 from app.config import settings
+from fastapi.security import (
+    OAuth2PasswordBearer,
+)
+from fastapi import Depends, status, HTTPException
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/user/jwt/login")
 
 # >>> private_key = b"-----BEGIN PRIVATE KEY-----\nMIGEAgEAMBAGByqGSM49AgEGBS..."
 # >>> public_key = b"-----BEGIN PUBLIC KEY-----\nMHYwEAYHKoZIzj0CAQYFK4EEAC..."
@@ -46,3 +52,11 @@ def hash_password(password: str) -> bytes:
 def validate_password(password: str, hashed_password: bytes) -> bool:
     print(password, type(password))
     return bcrypt.checkpw(password.encode(), hashed_password)
+
+
+def error_unauthorized(message: str) -> NoReturn:
+    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=message)
+
+
+def error_forbidden(message: str) -> NoReturn:
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=message)
