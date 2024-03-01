@@ -4,7 +4,16 @@ from enum import Enum
 from typing import List, Optional
 
 from pydantic import EmailStr
-from sqlalchemy import ForeignKey, String, Numeric, TIMESTAMP, func, Boolean, True_
+from sqlalchemy import (
+    ForeignKey,
+    String,
+    Numeric,
+    TIMESTAMP,
+    func,
+    Boolean,
+    True_,
+    LargeBinary,
+)
 from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
@@ -72,9 +81,9 @@ class User(Base):
     username: Mapped[str] = mapped_column(
         String(64), unique=True, nullable=False, index=True
     )
-    password: Mapped[bytes] = mapped_column(String(128), nullable=False, unique=True)
-    email: Mapped[str | None] = mapped_column(String(120), nullable=True)
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True, unique=False)
+    password: Mapped[bytes] = mapped_column(LargeBinary(), nullable=False, unique=True)
+    email: Mapped[str] = mapped_column(String(120), nullable=True)
+    is_active: Mapped[bool] = mapped_column(default=True, unique=False)
     registered_at: Mapped[datetime] = mapped_column(
         server_default=func.now(),
         default=datetime.utcnow,
