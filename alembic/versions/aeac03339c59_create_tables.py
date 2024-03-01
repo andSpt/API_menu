@@ -1,8 +1,8 @@
 """create tables
 
-Revision ID: 33dc7d40d7fd
+Revision ID: aeac03339c59
 Revises: 
-Create Date: 2024-02-28 14:05:38.369577
+Create Date: 2024-03-01 16:46:30.527788
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "33dc7d40d7fd"
+revision: str = "aeac03339c59"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -35,8 +35,17 @@ def upgrade() -> None:
         "user_table",
         sa.Column("id", sa.UUID(), nullable=False),
         sa.Column("username", sa.String(length=64), nullable=False),
-        sa.Column("password_hash", sa.String(length=128), nullable=False),
+        sa.Column("password", sa.LargeBinary(), nullable=False),
+        sa.Column("email", sa.String(length=120), nullable=True),
+        sa.Column("is_active", sa.Boolean(), nullable=False),
+        sa.Column(
+            "registered_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("password"),
     )
     op.create_index(
         op.f("ix_user_table_username"), "user_table", ["username"], unique=True
