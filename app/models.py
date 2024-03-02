@@ -88,3 +88,5 @@ class User(Base):
         server_default=func.now(),
         default=datetime.utcnow,
     )
+    confirmation_token: Mapped[str] = mapped_column(String, unique=True)
+    is_confirmed: Mapped[bool] = mapped_column(Boolean, default=False)
