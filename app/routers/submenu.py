@@ -10,7 +10,7 @@ router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus", tags=["Submenu"])
 
 
 @router.get(
-    "/",
+    "",
     response_model=list[SubmenuResponse],
     status_code=status.HTTP_200_OK,
     summary="Получить список подменю",
@@ -34,7 +34,7 @@ async def get_submenu(
 
 
 @router.post(
-    "/",
+    "",
     response_model=SubmenuResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Создать подменю",

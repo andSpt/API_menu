@@ -11,7 +11,7 @@ router = APIRouter(prefix="/api/v1/menus", tags=["Menu"])
 
 
 @router.get(
-    "/",
+    "",
     response_model=list[MenuResponse],
     status_code=200,
     summary="Получить список меню",
@@ -27,7 +27,7 @@ async def get_menu(menu_id: UUID, menu_service: MenuService = Depends()):
     return await menu_service.get_menu(menu_id=menu_id)
 
 
-@router.post("/", response_model=MenuResponse, status_code=201, summary="Создать меню")
+@router.post("", response_model=MenuResponse, status_code=201, summary="Создать меню")
 async def create_menu(menu_data: MenuCreate, menu_service: MenuService = Depends()):
     """Создать меню"""
     return await menu_service.create_menu(menu_data)

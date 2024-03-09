@@ -72,7 +72,6 @@ class MenuRepository:
         list_menus = [
             MenuResponse.model_validate(row, from_attributes=True) for row in result
         ]
-        await sleep(4)
         return list_menus
 
     async def get_menu(self, menu_id: UUID) -> MenuResponse:
@@ -81,9 +80,7 @@ class MenuRepository:
         menu_raw = result.first()
         if menu_raw:
             menu = MenuResponse.model_validate(menu_raw, from_attributes=True)
-            await sleep(2)
             return menu
-        await sleep(2)
         return not_found(self.name)
 
     async def create_menu(self, menu_create: MenuCreate) -> MenuResponse:
@@ -93,7 +90,6 @@ class MenuRepository:
         await self.session.commit()
         await self.session.refresh(db_menu)
         menu = MenuResponse.model_validate(db_menu, from_attributes=True)
-        await sleep(2)
         return menu
 
     async def update_menu(self, menu_update: MenuUpdate, menu_id: UUID) -> MenuResponse:
@@ -107,7 +103,6 @@ class MenuRepository:
         await self.session.commit()
         for name, value in menu_update.model_dump(exclude_unset=True).items():
             menu.__setattr__(name, value)
-        await sleep(2)
         return menu
 
     async def delete_menu(self, menu_id: UUID) -> JSONResponse:
@@ -115,5 +110,4 @@ class MenuRepository:
         stmt = delete(Menu).filter(Menu.id == menu_id)
         await self.session.execute(stmt)
         await self.session.commit()
-        await sleep(2)
         return successfully_deleted(self.name)

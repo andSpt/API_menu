@@ -82,11 +82,11 @@ class User(Base):
         String(64), unique=True, nullable=False, index=True
     )
     password: Mapped[bytes] = mapped_column(LargeBinary(), nullable=False, unique=True)
-    email: Mapped[str] = mapped_column(String(120), nullable=True)
+    email: Mapped[str] = mapped_column(String(120), nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True, unique=False)
     registered_at: Mapped[datetime] = mapped_column(
         server_default=func.now(),
         default=datetime.utcnow,
     )
-    confirmation_token: Mapped[str] = mapped_column(String, unique=True)
+    confirmation_token: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     is_confirmed: Mapped[bool] = mapped_column(Boolean, default=False)

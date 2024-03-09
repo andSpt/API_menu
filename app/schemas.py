@@ -69,14 +69,16 @@ class DishResponse(BaseItem):
 class UserCreate(BaseModel):
     username: Annotated[str, MinLen(3), MaxLen(20)]
     password: str
-    email: EmailStr | None = None
+    email: EmailStr
     is_active: bool | None = True
 
 
 class UserResponse(UserCreate):
     id: UUID4 | str
     password: bytes
-    registered_at: datetime
+    registered_at: datetime | None = datetime.utcnow()
+    confirmation_token: str
+    is_confirmed: bool
 
     model_config = ConfigDict(from_attributes=True)
 

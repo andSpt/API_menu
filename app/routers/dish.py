@@ -16,7 +16,7 @@ router = APIRouter(
 
 
 @router.get(
-    "/",
+    "",
     response_model=list[DishResponse],
     status_code=status.HTTP_200_OK,
     summary="Получить список блюд",
@@ -26,7 +26,7 @@ async def get_all_dishes(submenu_id: UUID, dish_service: DishService = Depends()
 
 
 @router.post(
-    "/",
+    "",
     response_model=DishResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Создать блюдо",
