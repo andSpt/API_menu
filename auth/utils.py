@@ -11,9 +11,6 @@ from fastapi import Depends, status, HTTPException
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/user/jwt/login")
 
-# >>> private_key = b"-----BEGIN PRIVATE KEY-----\nMIGEAgEAMBAGByqGSM49AgEGBS..."
-# >>> public_key = b"-----BEGIN PUBLIC KEY-----\nMHYwEAYHKoZIzj0CAQYFK4EEAC..."
-
 
 def encode_jwt(
     payload: dict,

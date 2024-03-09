@@ -11,17 +11,16 @@ from app.services.user_service import UserService
 from auth import utils as auth_utils
 from auth import user_views
 
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/user/jwt/login")
 
 
 router = APIRouter(prefix="/api/v1/user", tags=["User"])
 router_jwt = APIRouter(prefix="/api/v1/user/jwt", tags=["JWT"])
 
-# http_bearer = HTTPBearer()
-
 
 @router.post(
-    "/", response_model=UserResponse, status_code=201, summary="Создать пользователя"
+    "", response_model=UserResponse, status_code=201, summary="Создать пользователя"
 )
 async def create_user(user_data: UserCreate, user_service: UserService = Depends()):
     return await user_service.create_user(user_data=user_data)
@@ -38,7 +37,7 @@ async def get_user(user_id: UUID, user_service: UserService = Depends()):
 
 
 @router.get(
-    "/",
+    "",
     response_model=list[UserResponse],
     status_code=200,
     summary="Получить список пользователей",
@@ -78,7 +77,7 @@ async def auth_user_issue_jwt(
     return TokenInfo(access_token=token, token_type="Bearer")
 
 
-@router_jwt.get("/user/")
+@router_jwt.get("/user")
 async def auth_user_check_self_info(
     user: UserResponse = Depends(user_views.get_current_active_auth_user),
     payload: dict = Depends(user_views.get_current_token_payload),
@@ -90,3 +89,13 @@ async def auth_user_check_self_info(
         "id": user.id,
         "logged_in_at": iat,
     }
+
+
+@router.get("/confirm")
+async def request_confirmation(
+    confirmation_token: str, user_service: UserService = Depends()
+):
+    await user_service.find_user_by_confirmation_token(
+        confirmation_token=confirmation_token
+    )
+    return {"message": "Registration confirmed successfully"}

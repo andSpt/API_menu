@@ -1,9 +1,10 @@
 from typing import Any
 from uuid import UUID
 
-from fastapi import Depends
+from fastapi import Depends, HTTPException, status
 from sqlalchemy import select, update, delete, ScalarResult
 from fastapi.responses import JSONResponse
+
 
 from app.database import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,6 +16,7 @@ from app.repositories.repository_utils import (
     already_exist,
     not_found,
     successfully_deleted,
+    generate_confirmation_token,
 )
 from auth import utils as auth_utils
 
@@ -32,17 +34,22 @@ class UserRepository:
         """Checking the menu object with the title attribute in the DB"""
         if attr_name != "is_active":
             stmt = select(User).filter(getattr(User, attr_name) == value)
+            print(stmt)
             user = await self.session.scalar(stmt)
+            print(user)
             if user:
                 already_exist(self.name)
 
     async def create_user(self, user_data: UserCreate) -> UserResponse:
         user_data_to_dict: dict = user_data.model_dump()
-        if user_data_to_dict["password"]:
-            hashed_password: bytes = auth_utils.hash_password(user_data.password)
-            user_data_to_dict["password"] = hashed_password
+        hashed_password: bytes = auth_utils.hash_password(user_data.password)
+        user_data_to_dict["password"] = hashed_password
         for attr_name, value in user_data_to_dict.items():
             await self._check_exists_user_by_attr(attr_name, value)
+        confirmation_token: str = generate_confirmation_token(
+            email=user_data_to_dict.get("email")
+        )
+        user_data_to_dict["confirmation_token"] = confirmation_token
         user = User(**user_data_to_dict)
         self.session.add(user)
         await self.session.commit()
@@ -57,17 +64,21 @@ class UserRepository:
 
     async def update_user(self, user_update: UserUpdate, user_id: UUID) -> UserResponse:
         user: UserResponse = await self.get_user(user_id=user_id)
-        user_update_to_dict: dict = user_update.model_dump()
-        if user_update_to_dict["password"]:
-            hashed_password: bytes = auth_utils.hash_password(user_update.password)
+        user_update_to_dict: dict = user_update.model_dump(exclude_unset=True)
+        if user_update_to_dict.get("password"):
+            hashed_password: bytes = auth_utils.hash_password(
+                user_update_to_dict.get("password")
+            )
             user_update_to_dict["password"] = hashed_password
 
         for attr_name, value in user_update_to_dict.items():
             await self._check_exists_user_by_attr(attr_name, value)
+            user.__setattr__(attr_name, value)
+            print(f"!!!!!!!!!!{user}")
         stmt = update(User).filter(User.id == user_id).values(**user_update_to_dict)
         await self.session.execute(stmt)
         await self.session.commit()
-        return UserResponse.model_validate(**user_update_to_dict)
+        return user
 
     async def delete_user(self, user_id: UUID) -> JSONResponse:
         await self.get_user(user_id=user_id)
@@ -89,3 +100,16 @@ class UserRepository:
         user = await self.session.scalar(stmt)
         if user:
             return UserResponse.model_validate(user)
+
+    async def find_user_by_confirmation_token(self, confirmation_token: str) -> bool:
+        stmt = select(User).filter_by(confirmation_token=confirmation_token)
+        user: User = await self.session.scalar(stmt)
+        if user:
+            user.is_confirmed = True
+            await self.session.commit()
+            await self.session.refresh(user)
+            return True
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Ссылка для подтверждения регистрации не действительна. Возможно, вы уже подтвердили регистрацию.",
+        )

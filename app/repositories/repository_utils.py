@@ -1,5 +1,6 @@
+import time
 from typing import NoReturn
-
+import hashlib
 from fastapi import status, HTTPException
 from fastapi.responses import JSONResponse
 
@@ -21,3 +22,9 @@ def successfully_deleted(name: str) -> JSONResponse:
         status_code=status.HTTP_200_OK,
         content={"status": True, "message": f"The {name} has been deleted"},
     )
+
+
+def generate_confirmation_token(email: str) -> str:
+    timestamp = int(time.time())
+    data: bytes = (email + str(timestamp)).encode()
+    return hashlib.sha256(data).hexdigest()
