@@ -24,6 +24,7 @@ bcrypt = "^4.1.2"
 python-multipart = "^0.0.9"
 sqlmodel = "^0.0.16"
 pytest-asyncio = "0.18.3"
+pytest-order = "^1.2.0"
 
 [tool.pytest.ini_options]
 testpaths = "app/tests"
