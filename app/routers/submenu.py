@@ -72,4 +72,4 @@ async def update_submenu(
 async def delete_submenu(
     menu_id: UUID, submenu_id: UUID, submenu_service: SubmenuService = Depends()
 ) -> JSONResponse:
-    return await submenu_service.delete(menu_id=menu_id, submenu_id=submenu_id)
+    return await submenu_service.delete_submenu(menu_id=menu_id, submenu_id=submenu_id)
