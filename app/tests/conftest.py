@@ -87,13 +87,13 @@ def menu_data():
     return {"title": "My menu 1", "description": "My menu description 1"}
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def submenu_data():
     """Фикстура данных для подменю"""
     return {"title": "My submenu 1", "description": "My submenu description 1"}
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def dish_data():
     """Фикстура данных для блюда"""
     return {
