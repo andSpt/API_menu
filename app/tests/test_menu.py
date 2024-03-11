@@ -1,22 +1,8 @@
 from uuid import UUID
-from sqlalchemy.ext.asyncio import AsyncSession
-
 import pytest
-from app.repositories.menu_repository import Menu
-from fastapi import Depends
 
-from app.database import get_session
-from app.repositories.menu_repository import MenuRepository
 
-# menu_repository: MenuRepository = Depends()
-import logging
-
-# Конфигурация логирования
-# logging.basicConfig(level=logging.DEBUG)
-# logger = logging.getLogger(__name__)
 BASE_URL = "/api/v1/menus"
-
-# menu_data: dict = {"title": "My menu 1", "description": "My menu description 1"}
 
 
 @pytest.mark.order(1)
@@ -35,10 +21,6 @@ async def test_create_menu(client, menu_data) -> None:
     assert menu_data["title"] == response.json().get("title")
     assert menu_data["description"] == response.json().get("description")
     menu_data["id"] = menu_id
-
-    # menu_in_db = get_menu_from_test_db
-    # assert menu_data["title"] == menu_in_db.title
-    # assert menu_data["description"] == menu_in_db.description
 
 
 @pytest.mark.order(3)

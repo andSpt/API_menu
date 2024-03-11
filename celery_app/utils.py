@@ -3,8 +3,8 @@ from email.message import EmailMessage
 
 SMTP_HOST = "smtp.yandex.ru"
 SMTP_PORT = 465
-SMTP_USER = "Antestov1"
-SMTP_PASSWORD = "Antestov123456"
+SMTP_USER = "Antestov1@yandex.ru"
+SMTP_PASSWORD = "wrxvmwjjazkqltgj"
 
 
 def generate_confirmation_email(username: str, confirmation_token: str) -> EmailMessage:
