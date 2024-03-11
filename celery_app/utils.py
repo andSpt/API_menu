@@ -14,7 +14,7 @@ def generate_confirmation_email(username: str, confirmation_token: str) -> Email
     email["To"] = SMTP_USER
 
     confirmation_link: str = (
-        f"http://127.0.0.1:8040/api/v1/user/confirm?confirmation_token={confirmation_token}"
+        f"http://127.0.0.1:8040/api/v1/user/confirm/{confirmation_token}"
     )
 
     email.set_content(

@@ -91,7 +91,7 @@ async def auth_user_check_self_info(
     }
 
 
-@router.get("/confirm")
+@router.get("/confirm/{confirmation_token}")
 async def request_confirmation(
     confirmation_token: str, user_service: UserService = Depends()
 ):
