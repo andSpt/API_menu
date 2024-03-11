@@ -17,9 +17,9 @@ celery = Celery(__name__, broker=rabbitmq_url)
 
 
 @celery.task
-def send_confirmation_email(username: str, confirmation_token: str):
+def send_confirmation_email(username: str, confirmation_token: str, user_email: str):
     email = celery_utils.generate_confirmation_email(
-        username=username, confirmation_token=confirmation_token
+        username=username, confirmation_token=confirmation_token, user_email=user_email
     )
     with smtplib.SMTP_SSL(celery_utils.SMTP_HOST, celery_utils.SMTP_PORT) as server:
         server.login(user=celery_utils.SMTP_USER, password=celery_utils.SMTP_PASSWORD)

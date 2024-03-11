@@ -25,7 +25,9 @@ class UserService:
             user_data=user_data
         )
         send_confirmation_email(
-            username=user.username, confirmation_token=user.confirmation_token
+            username=user.username,
+            confirmation_token=user.confirmation_token,
+            user_email=user.email,
         )
         self.background_tasks.add_task(
             self.user_cache.set_user_to_cache, user_id=user.id, user_data=user

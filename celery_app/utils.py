@@ -7,11 +7,13 @@ SMTP_USER = "Antestov1@yandex.ru"
 SMTP_PASSWORD = "wrxvmwjjazkqltgj"
 
 
-def generate_confirmation_email(username: str, confirmation_token: str) -> EmailMessage:
+def generate_confirmation_email(
+    username: str, confirmation_token: str, user_email: str
+) -> EmailMessage:
     email = EmailMessage()
     email["Subject"] = "Подтверждение регистрации"
     email["From"] = SMTP_USER
-    email["To"] = SMTP_USER
+    email["To"] = user_email
 
     confirmation_link: str = (
         f"http://127.0.0.1:8040/api/v1/user/confirm/{confirmation_token}"
