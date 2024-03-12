@@ -21,7 +21,7 @@ from app.repositories.menu_repository import MenuRepository
 
 # from sqlmodel import SQLModel
 
-# test_engine = create_async_engine(settings.test_db_url, echo=settings.db_echo)
+test_engine = create_async_engine(settings.test_db_url, echo=settings.db_echo)
 #
 # test_async_session = async_sessionmaker(
 #     bind=engine, autoflush=False, autocommit=False, expire_on_commit=False
@@ -41,18 +41,18 @@ async def client(scope="session") -> AsyncClient:
         yield ac
 
 
-# @pytest.fixture(scope="function")
-# async def async_test_session() -> AsyncSession:
-#     session = async_sessionmaker(
-#         bind=engine,
-#         expire_on_commit=False,
-#         class_=AsyncSession,
-#         autoflush=False,
-#         autocommit=False,
-#     )
-#
-#     async with session() as s:
-#         yield s
+@pytest.fixture(scope="function")
+async def async_test_session() -> AsyncSession:
+    session = async_sessionmaker(
+        bind=test_engine,
+        expire_on_commit=False,
+        class_=AsyncSession,
+        autoflush=False,
+        autocommit=False,
+    )
+
+    async with session() as s:
+        yield s
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -62,6 +62,12 @@ async def prepare_db():
     yield
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
+
+
+@pytest.fixture(scope="function")
+async def menu_repository(async_test_session):
+    """Фикстура для создания объекта репозитория меню"""
+    return MenuRepository(session=async_test_session)
 
 
 # async def create_tables():
