@@ -2,8 +2,6 @@ from uuid import UUID
 import pytest
 from fastapi import HTTPException
 
-from app.database import get_session
-from app.repositories.menu_repository import MenuRepository
 
 BASE_URL = "/api/v1/menus"
 
