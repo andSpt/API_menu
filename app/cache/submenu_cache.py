@@ -23,11 +23,9 @@ class SubmenuCache:
     async def set_submenu_to_cache(
         self, submenu_id: UUID, submenu_data: SubmenuResponse
     ) -> None:
-        await sleep(4)
         await self.redis.hset(
             self.all_submenus_key, str(submenu_id), submenu_data.model_dump_json()
         )
-        print(f"!!!!!! Add to cache submenu {submenu_id}!!!!!")
         await self.redis.expire(name=self.all_submenus_key, time=settings.cache_ttl)
 
     async def get_cached_submenu(self, submenu_id: UUID) -> SubmenuResponse | None:
@@ -35,7 +33,6 @@ class SubmenuCache:
             self.all_submenus_key, str(submenu_id)
         )
         if cached_submenu:
-            print(f"!!!!Submenu from cache {submenu_id}!!!")
             return SubmenuResponse.model_validate_json(cached_submenu)
 
     async def get_all_submenus_from_cache(self) -> list[SubmenuResponse] | None:
@@ -49,20 +46,15 @@ class SubmenuCache:
                 SubmenuResponse.model_validate_json(value)
                 for value in all_submenus_in_cache.values()
             ]
-            print(
-                f"!!!!Submenus from cache {[submenu.id for submenu in all_submenus]}!!!"
-            )
             return all_submenus
 
     async def set_all_submenus_to_cache(self, submenus: list[SubmenuResponse]) -> None:
-        await sleep(4)
         for submenu in submenus:
             await self.redis.hset(
                 self.all_submenus_key, str(submenu.id), submenu.model_dump_json()
             )
         await self.redis.expire(self.all_submenus_key, time=settings.cache_ttl)
         await self.redis.set(self.last_cache_update_key, time())
-        print(f"!!!!!! Add to cache all submenus !!!!!")
 
     async def update_submenu_in_cache(
         self, submenu_id: UUID, submenu_updated: SubmenuResponse
