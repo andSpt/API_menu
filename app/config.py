@@ -29,5 +29,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-# print(type(settings.auth_jwt.private_key_path))
-# print(settings.auth_jwt.private_key_path)
