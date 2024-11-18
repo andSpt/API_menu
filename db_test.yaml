@@ -3,14 +3,16 @@ version: '3.9'
 services:
   db_test:
     container_name: db_test
-    image: postgres:latest
+    image: postgres:16
     restart: always
     environment:
       POSTGRES_USER: test_postgres
       POSTGRES_PASSWORD: test_postgres
       POSTGRES_DB: test_ylab
     ports:
-      - '127.0.0.1:6050:5432'
+      - '6050:5432'
+    networks:
+      - test_api_network
     healthcheck:
       test: sh -c "pg_isready -U test_postgres -d test_ylab"
       interval: 10s
@@ -18,12 +20,15 @@ services:
       retries: 5
       start_period: 80s
 
+
   test_redis:
     container_name: test_redis
     image: redis:latest
     restart: always
     ports:
-      - '127.0.0.1:6479:6379'
+      - '6479:6379'
+    networks:
+      - test_api_network
     healthcheck:
       test: sh -c "redis-cli ping"
       interval: 10s
@@ -31,29 +36,30 @@ services:
       retries: 5
       start_period: 80s
 
-  test_rabbitmq:
-    container_name: test_rabbitmq
-    image: rabbitmq:3.13-alpine
-    restart: always
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    ports:
-      - "127.0.0.1:5682:5672"
-    networks:
-      - api_network
-    healthcheck:
-      test: sh -c "rabbitmq-diagnostics -q ping"
-      interval: 10s
-      timeout: 30s
-      retries: 5
-      start_period: 80s
 
+  app_test:
+    build:
+      context: .
+    container_name: app_test
+    environment:
+      DB_URL: postgresql+asyncpg://test_postgres:test_postgres@db_test:5432/test_ylab
+      REDIS_URL: redis://test_redis:6379
+      RABBITMQ_URL: pyamqp://guest:guest@test_rabbitmq:5672//
+    entrypoint: sh -c "alembic upgrade head && pytest -vv --disable-warnings"
+    ports:
+      - "8040:8040"
+    networks:
+      - test_api_network
+    depends_on:
+      - db_test
+      - test_redis
 
 
 networks:
-  api_network:
+  test_api_network:
     driver: bridge
 
 volumes:
   postgres_data:
   rabbitmq_data:
+

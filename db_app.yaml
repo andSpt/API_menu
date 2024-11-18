@@ -2,8 +2,8 @@ version: '3.9'
 
 services:
   db_app:
-    container_name: db_web
-    image: postgres:latest
+    container_name: db_app
+    image: postgres:16
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -12,7 +12,9 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: ylab
     ports:
-      - '127.0.0.1:6040:5432'
+      - '6040:5432'
+    networks:
+      - api_network
     healthcheck:
       test: sh -c "pg_isready -U postgres -d ylab"
       interval: 10s
@@ -21,11 +23,13 @@ services:
       start_period: 80s
 
   redis:
-    container_name: redis_web
+    container_name: redis
     image: redis:latest
     restart: always
     ports:
-      - '127.0.0.1:6379:6379'
+      - '6379:6379'
+    networks:
+      - api_network
     healthcheck:
       test: sh -c "redis-cli ping"
       interval: 10s
@@ -33,14 +37,31 @@ services:
       retries: 5
       start_period: 80s
 
+  app:
+    build:
+      context: .
+    container_name: app
+    environment:
+      DB_URL: postgresql+asyncpg://postgres:postgres@db_app:5432/ylab
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: pyamqp://guest:guest@rabbitmq:5672//
+    entrypoint: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8040 --reload"
+    ports:
+      - "8040:8040"
+    networks:
+      - api_network
+    depends_on:
+      - db_app
+      - redis
+
   rabbitmq:
-    container_name: rabbitmq_web
+    container_name: rabbitmq
     image: rabbitmq:3.13-alpine
     restart: always
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     ports:
-      - "127.0.0.1:5672:5672"
+      - "5672:5672"
     networks:
       - api_network
     healthcheck:
@@ -49,8 +70,25 @@ services:
       timeout: 30s
       retries: 5
       start_period: 80s
+    depends_on:
+      - db_app
+      - redis
+      - app
 
-
+  celery:
+    build:
+      context: .
+    container_name: celery
+    environment:
+      CELERY_BROKER_URL: pyamqp://guest@rabbitmq:5672//
+    entrypoint: sh -c "celery -A celery_app.tasks worker --loglevel=INFO"
+    networks:
+      - api_network
+    depends_on:
+      - db_app
+      - redis
+      - app
+      - rabbitmq
 
 networks:
   api_network:
@@ -59,6 +97,8 @@ networks:
 volumes:
   postgres_data:
   rabbitmq_data:
+  redis_data:
+  celery_data:  
 
 
 

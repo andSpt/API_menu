@@ -15,17 +15,17 @@ class AuthJWT(BaseModel):
 
 
 class Settings(BaseSettings):
-    db_url: str = "postgresql+asyncpg://postgres:postgres@127.0.0.1:6040/ylab"
+    db_url: str = "postgresql+asyncpg://postgres:postgres@db_app:6040/ylab"
     db_echo: bool = True
-    redis_url: str = "redis://127.0.0.1:6379"
+    redis_url: str = "redis://redis:6379"
     cache_ttl: int = 1
+    rabbitmq_url: str = "pyamqp://guest@rabbitmq:5672//"
     test_db_url: str = (
-        "postgresql+asyncpg://test_postgres:test_postgres@127.0.0.1:6050/test_ylab"
+        "postgresql+asyncpg://test_postgres:test_postgres@db_test:5432/test_ylab"
     )
-    test_redis: str = "redis://127.0.0.1:6479"
+    test_redis: str = "redis://test_redis:6379"
+    test_rabbitmq: str = "pyamqp://guest@test_rabbitmq:5672//"
     auth_jwt: AuthJWT = AuthJWT()
-    rabbitmq_url: str = "pyamqp://guest@127.0.0.1:5672//"
-    test_rabbitmq: str = "pyamqp://guest@127.0.0.1:5682//"
 
 
 settings = Settings()
