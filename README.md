@@ -27,7 +27,7 @@
 * Во время запуска тестового сценария БД должна быть пуста.
 
 
-## Запуск
+## Запуск API
 
 [Docker](https://www.docker.com/) должен быть установлен
 
@@ -36,6 +36,12 @@
 ```bash
 $ docker-compose -f db_app.yaml up -d
 ```
+#### API доступно по адрессу 127.0.0.1:8040
+
+#### Swagger 127.0.0.1:8040/docs
+
+## Остановка API
+
 Остановить все сервисы без удаления тома::
 
 ```bash
@@ -47,9 +53,23 @@ $ docker-compose -f db_app.yaml down
 ```bash
 $ docker-compose -f db_app.yaml down -v
 ```
+## Запуск тестов
 
-Для запуска тестов API:
 
 ```bash
 $ docker-compose -f db_test.yaml up -d
+```
+
+Чтобы посмотреть логи тестов:
+
+```bash
+$ docker logs app_test 
+```
+
+## Остановка тестов
+
+Остановить все сервисы с удалением тома:
+
+```bash
+$ docker-compose -f db_test.yaml down -v
 ```
