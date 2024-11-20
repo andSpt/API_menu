@@ -41,7 +41,6 @@ class DishRepository:
         list_dishes = [
             DishResponse.model_validate(row, from_attributes=True) for row in result
         ]
-        print(list_dishes)
         return list_dishes
 
     async def create_dish(

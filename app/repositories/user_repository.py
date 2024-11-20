@@ -34,9 +34,7 @@ class UserRepository:
         """Checking the menu object with the title attribute in the DB"""
         if attr_name != "is_active":
             stmt = select(User).filter(getattr(User, attr_name) == value)
-            print(stmt)
             user = await self.session.scalar(stmt)
-            print(user)
             if user:
                 already_exist(self.name)
 
