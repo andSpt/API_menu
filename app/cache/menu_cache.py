@@ -1,9 +1,8 @@
 import json
-from asyncio import sleep
 from time import time
 from uuid import UUID
 
-from fastapi import BackgroundTasks, Depends
+from fastapi import Depends
 from redis import asyncio as aioredis
 
 from app.config import settings
