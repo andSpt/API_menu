@@ -16,11 +16,12 @@ RUN mkdir /code
 
 WORKDIR /code
 
-COPY poetry.lock pyproject.toml .
+COPY poetry.lock .
+COPY pyproject.toml .
 
 RUN pip install poetry
 
-RUN poetry install
+RUN poetry install --no-root
 
 COPY . .
 
