@@ -1,22 +1,21 @@
 from uuid import UUID
 
 import sqlalchemy
-
 from fastapi import Depends
 from fastapi.responses import JSONResponse
-from sqlalchemy import select, func, join, Select, update, delete
+from sqlalchemy import Select, delete, func, join, select, update
+from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from app.models import Dish, Submenu, Menu
-from sqlalchemy.engine import Result
 
 from app.database import get_session
-from app.schemas import SubmenuUpdate, SubmenuResponse, SubmenuCreate
+from app.models import Dish, Menu, Submenu
 from app.repositories.repository_utils import (
     already_exist,
     not_found,
     successfully_deleted,
 )
+from app.schemas import SubmenuCreate, SubmenuResponse, SubmenuUpdate
 
 
 class SubmenuRepository:

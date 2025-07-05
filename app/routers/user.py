@@ -1,16 +1,12 @@
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
-from app.schemas import TokenInfo, UserUpdate
-
-from fastapi import APIRouter, Depends, status, HTTPException
-from app.schemas import UserResponse, UserCreate
+from app.schemas import TokenInfo, UserCreate, UserResponse, UserUpdate
 from app.services.user_service import UserService
-
-from auth import utils as auth_utils
 from auth import user_views
-
+from auth import utils as auth_utils
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/user/jwt/login")
 

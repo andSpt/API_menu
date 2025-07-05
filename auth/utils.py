@@ -1,13 +1,12 @@
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
 from typing import NoReturn
-import jwt
+
 import bcrypt
+import jwt
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 
 from app.config import settings
-from fastapi.security import (
-    OAuth2PasswordBearer,
-)
-from fastapi import Depends, status, HTTPException
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/user/jwt/login")
 

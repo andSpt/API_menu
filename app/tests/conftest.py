@@ -5,19 +5,14 @@ import pytest
 import pytest_asyncio
 from fastapi import Depends
 from httpx import AsyncClient
-from sqlalchemy import select, func, distinct
-from sqlalchemy.ext.asyncio import (
-    async_sessionmaker,
-    create_async_engine,
-)
-
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.database import engine, async_session, get_session
+from sqlalchemy import distinct, func, select
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.config import settings
-from main import app
-from app.models import Base, Menu, Submenu, Dish
+from app.database import async_session, engine, get_session
+from app.models import Base, Dish, Menu, Submenu
 from app.repositories.menu_repository import MenuRepository
+from main import app
 
 # from sqlmodel import SQLModel
 

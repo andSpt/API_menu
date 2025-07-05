@@ -1,6 +1,5 @@
 from email.message import EmailMessage
 
-
 SMTP_HOST = "smtp.yandex.ru"
 SMTP_PORT = 465
 SMTP_USER = "Antestov1@yandex.ru"

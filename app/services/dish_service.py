@@ -1,12 +1,12 @@
 from uuid import UUID
 
-from fastapi import Depends, BackgroundTasks
+from fastapi import BackgroundTasks, Depends
 from fastapi.responses import JSONResponse
 
-from app.repositories.dish_repository import DishRepository
-from app.models import Dish
-from app.schemas import DishResponse, DishCreate, DishUpdate
 from app.cache.dish_cache import DishCache
+from app.models import Dish
+from app.repositories.dish_repository import DishRepository
+from app.schemas import DishCreate, DishResponse, DishUpdate
 
 
 class DishService:

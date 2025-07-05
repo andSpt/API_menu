@@ -1,7 +1,8 @@
+import hashlib
 import time
 from typing import NoReturn
-import hashlib
-from fastapi import status, HTTPException
+
+from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
 
 

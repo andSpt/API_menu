@@ -1,20 +1,21 @@
 from uuid import UUID
 
-from fastapi import Depends
 import sqlalchemy
-from sqlalchemy import select, Select, ScalarResult, update, delete
+from fastapi import Depends
+from fastapi.responses import JSONResponse
+from sqlalchemy import ScalarResult, Select, delete, select, update
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from fastapi.responses import JSONResponse
-from app.models import Dish, Submenu, Menu
+
 from app.database import get_session
-from app.schemas import DishResponse, DishCreate, DishUpdate
+from app.models import Dish, Menu, Submenu
 from app.repositories.repository_utils import (
     already_exist,
     not_found,
     successfully_deleted,
 )
+from app.schemas import DishCreate, DishResponse, DishUpdate
 
 
 class DishRepository:

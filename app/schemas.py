@@ -1,9 +1,9 @@
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
 from typing import Annotated
-from annotated_types import MinLen, MaxLen
 
-from pydantic import BaseModel, ConfigDict, field_validator, UUID4, validator, EmailStr
+from annotated_types import MaxLen, MinLen
+from pydantic import UUID4, BaseModel, ConfigDict, EmailStr, field_validator, validator
 
 
 class BaseItem(BaseModel):

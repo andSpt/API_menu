@@ -1,39 +1,35 @@
-from uuid import UUID, uuid4
-
 # from time import sleep
 from asyncio import sleep
-
 from typing import Annotated, NoReturn
-from fastapi import Depends, HTTPException, Query
+from uuid import UUID, uuid4
+
+from fastapi import Depends, HTTPException, Query, status
 from fastapi.responses import JSONResponse
-from fastapi import status, HTTPException
 from pydantic import UUID4, BaseModel
-
 from sqlalchemy import (
-    Select,
-    select,
-    func,
-    update,
-    or_,
-    distinct,
-    outerjoin,
-    join,
     Row,
+    Select,
     delete,
+    distinct,
+    func,
+    join,
+    or_,
+    outerjoin,
+    select,
+    update,
 )
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine import Result, ScalarResult
-from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload, selectinload
 
-from app.models import Menu, Submenu, Dish
 from app.database import get_session
-from app.schemas import MenuCreate, MenuUpdate, MenuResponse
-
+from app.models import Dish, Menu, Submenu
 from app.repositories.repository_utils import (
     already_exist,
     not_found,
     successfully_deleted,
 )
+from app.schemas import MenuCreate, MenuResponse, MenuUpdate
 
 
 class MenuRepository:

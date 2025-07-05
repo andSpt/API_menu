@@ -1,7 +1,7 @@
 from uuid import UUID
+
 import pytest
 from fastapi import HTTPException
-
 
 BASE_URL = "/api/v1/menus"
 

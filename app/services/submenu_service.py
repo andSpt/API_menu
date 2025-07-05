@@ -1,14 +1,14 @@
 from uuid import UUID
 
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import Depends, BackgroundTasks
+from fastapi import BackgroundTasks, Depends
 from fastapi.responses import JSONResponse
-from app.database import get_session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import Submenu
-from app.schemas import SubmenuResponse, SubmenuUpdate, SubmenuCreate
-from app.repositories.submenu_repository import SubmenuRepository
 from app.cache.submenu_cache import SubmenuCache
+from app.database import get_session
+from app.models import Submenu
+from app.repositories.submenu_repository import SubmenuRepository
+from app.schemas import SubmenuCreate, SubmenuResponse, SubmenuUpdate
 
 
 class SubmenuService:

@@ -1,10 +1,11 @@
 from uuid import UUID
 
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
-from app.schemas import SubmenuResponse, SubmenuCreate, SubmenuUpdate
+from app.schemas import SubmenuCreate, SubmenuResponse, SubmenuUpdate, UserResponse
 from app.services.submenu_service import SubmenuService
+from auth.user_views import get_current_active_auth_user
 
 router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus", tags=["Submenu"])
 
@@ -43,6 +44,7 @@ async def create_submenu(
     menu_id: UUID,
     submenu_create: SubmenuCreate,
     submenu_service: SubmenuService = Depends(),
+    current_user: UserResponse = Depends(get_current_active_auth_user),
 ):
     return await submenu_service.create_submenu(
         menu_id=menu_id, submenu_create=submenu_create
@@ -60,6 +62,7 @@ async def update_submenu(
     submenu_id: UUID,
     submenu_update: SubmenuUpdate,
     submenu_service: SubmenuService = Depends(),
+    current_user: UserResponse = Depends(get_current_active_auth_user),
 ):
     return await submenu_service.update_submenu(
         menu_id=menu_id, submenu_id=submenu_id, submenu_update=submenu_update
@@ -70,6 +73,9 @@ async def update_submenu(
     "/{submenu_id}", status_code=status.HTTP_200_OK, summary="Удалить подменю"
 )
 async def delete_submenu(
-    menu_id: UUID, submenu_id: UUID, submenu_service: SubmenuService = Depends()
+    menu_id: UUID,
+    submenu_id: UUID,
+    submenu_service: SubmenuService = Depends(),
+    current_user: UserResponse = Depends(get_current_active_auth_user),
 ) -> JSONResponse:
     return await submenu_service.delete_submenu(menu_id=menu_id, submenu_id=submenu_id)

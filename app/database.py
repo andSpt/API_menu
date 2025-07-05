@@ -1,12 +1,12 @@
 from sys import modules
 from typing import AsyncIterator
+
 from click import echo
-from redis import Redis, asyncio as redis
+from redis import Redis
+from redis import asyncio as redis
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-
 from app.config import settings
-
 
 db_url: str = settings.db_url
 cache_url: str = settings.redis_url

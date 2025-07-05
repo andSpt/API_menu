@@ -2,22 +2,19 @@ from typing import Any
 from uuid import UUID
 
 from fastapi import Depends, HTTPException, status
-from sqlalchemy import select, update, delete, ScalarResult
 from fastapi.responses import JSONResponse
-
-
-from app.database import get_session
+from sqlalchemy import ScalarResult, delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.schemas import UserCreate, UserResponse, UserUpdate
+from app.database import get_session
 from app.models import User
-from auth import utils as auth_utils
 from app.repositories.repository_utils import (
     already_exist,
+    generate_confirmation_token,
     not_found,
     successfully_deleted,
-    generate_confirmation_token,
 )
+from app.schemas import UserCreate, UserResponse, UserUpdate
 from auth import utils as auth_utils
 
 

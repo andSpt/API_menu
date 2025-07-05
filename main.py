@@ -1,11 +1,9 @@
-from fastapi import FastAPI
 import uvicorn
+from fastapi import FastAPI
 
-
-from app.routers import menu, dish, submenu, user
-from app.models import Base
 from app.database import engine
-
+from app.models import Base
+from app.routers import dish, menu, submenu, user
 
 app = FastAPI()
 

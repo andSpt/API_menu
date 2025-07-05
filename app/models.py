@@ -5,23 +5,23 @@ from typing import List, Optional
 
 from pydantic import EmailStr
 from sqlalchemy import (
-    ForeignKey,
-    String,
-    Numeric,
     TIMESTAMP,
-    func,
     Boolean,
-    True_,
+    ForeignKey,
     LargeBinary,
+    Numeric,
+    String,
+    True_,
+    func,
 )
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
+    declared_attr,
     mapped_column,
     relationship,
-    declared_attr,
 )
-from sqlalchemy.dialects.postgresql import UUID
 
 
 class Base(DeclarativeBase):

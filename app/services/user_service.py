@@ -1,11 +1,12 @@
 from uuid import UUID
 
-from fastapi import Depends, BackgroundTasks
-from app.schemas import UserCreate, UserResponse, UserUpdate
-from app.repositories.user_repository import UserRepository
-from app.models import User
-from app.cache.user_cache import UserCache
+from fastapi import BackgroundTasks, Depends
 from fastapi.responses import JSONResponse
+
+from app.cache.user_cache import UserCache
+from app.models import User
+from app.repositories.user_repository import UserRepository
+from app.schemas import UserCreate, UserResponse, UserUpdate
 from celery_app.tasks import send_confirmation_email
 
 

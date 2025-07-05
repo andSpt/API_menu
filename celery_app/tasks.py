@@ -1,11 +1,10 @@
 import smtplib
-
-from celery_app import utils as celery_utils
 from sys import modules
 
 from celery import Celery
-from app.config import settings
 
+from app.config import settings
+from celery_app import utils as celery_utils
 
 rabbitmq_url: str = settings.rabbitmq_url
 
